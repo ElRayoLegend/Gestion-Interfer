@@ -30,23 +30,33 @@ export const saveCompany = async (req, res) => {
     }
 };
 
-export const getCompanys = async(req, res) => {
+export const getCompanys = async (req, res) => {
     try {
-        const { limits = 10, from = 0 } = req.query;
+        const { Filter = 'Ascendente' } = req.body;
 
-        const query = { status: "true" };
+        let sortCriteria = {};
+        let query = { status: "true" };
 
-        const [total, companys] = await Promise.all([
-            Company.countDocuments(query),
-            Company.find(query)
-                .skip(Number(from))
-                .limit(Number(limits))
-        ]);
+        if (Filter && !["A-Z", "Z-A", "Ascendente", "Descendente"].includes(Filter)) {
+            query.businessCategory = Filter;
+        }
+
+        if (Filter === "A-Z") {
+            sortCriteria["companyName"] = 1;
+        } else if (Filter === "Z-A") {
+            sortCriteria["companyName"] = -1;
+        } else if (Filter === "Ascendente") {
+            sortCriteria["yearsOfExperience"] = 1;
+        } else if (Filter === "Descendente") {
+            sortCriteria["yearsOfExperience"] = -1;
+        }
+
+        const companies = await Company.find(query)
+            .sort(sortCriteria);
 
         return res.status(200).json({
             success: true,
-            total,
-            companys
+            companies
         });
     } catch (err) {
         return res.status(500).json({
@@ -79,27 +89,6 @@ export const getCompanyById = async(req, res) => {
         return res.status(500).json({
             success: false,
             message: "Error al obtener la empresa",
-            error: err.message
-        })
-    }
-}
-
-export const deleteCompany = async (req, res) => {
-    try{
-        const { id } = req. params
-
-        const company =  await Company.findByIdAndDelete(id, {status: false}, {new: true})
-
-        return res.status(200).json({
-            success: true,
-            message: "Empresa Eliminada",
-            company
-        })
-
-    }catch(err){
-        return res.status(500).json({
-            success: false,
-            message: "Error al eliminar la Empresa",
             error: err.message
         })
     }

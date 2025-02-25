@@ -41,11 +41,3 @@ export const updateCompanyValidator = [
     validarCampos,
     handleErrors
 ];
-
-export const deleteCompanyValidator = [
-    validateJWT,
-    param("id").isMongoId().withMessage("No es un ID válido de MongoDB"),
-    param("id").custom(companyExists),
-    validarCampos,
-    handleErrors
-];
