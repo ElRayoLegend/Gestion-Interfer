@@ -7,6 +7,7 @@ import morgan from "morgan"
 import { dbConnection } from "./mongo.js"
 import authRoutes from "../src/auth/auth.routes.js"
 import adminRoutes from "../src/admin/admin.routes.js"
+import companyRoutes from "../src/company/company.routes.js"
 import apiLimiter from "../src/middlewares/rate-limit-validator.js"
 
 const middlewares = (app) => {
@@ -35,6 +36,7 @@ const middlewares = (app) => {
 const routes = (app) =>{
     app.use("/gestorInterfer/v1/auth", authRoutes)
     app.use("/gestorInterfer/v1/admin", adminRoutes)
+    app.use("/gestorInterfer/v1/company", companyRoutes)
 }
 
 const conectarDB = async () =>{
