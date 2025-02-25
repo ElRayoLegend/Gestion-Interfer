@@ -1,5 +1,6 @@
 'use strict';
 
+import xlsx from 'xlsx';
 import Company from './company.model.js';
 
 export const saveCompany = async (req, res) => {
@@ -126,3 +127,48 @@ export const updateCompany = [
         }
     },
 ];
+
+export const generateReport = async (req, res) => {
+    try {
+        console.log('Iniciando la consulta de compañías...');
+
+        const companies = await Company.find();
+
+        if (!companies || companies.length === 0) {
+            console.log('No se encontraron compañías.');
+            return res.status(404).send("No se encontraron compañías.");
+        }
+
+        console.log(`Se encontraron ${companies.length} compañías.`);
+
+        const data = companies.map(comp => ({
+            ID: comp._id,
+            CompanyName: comp.companyName,
+            EntityType: comp.entityType,
+            BusinessCategory: comp.businessCategory,
+            ImpactLevel: comp.impactLevel,
+            YearsOfExperience: comp.yearsOfExperience,
+            'Fecha de Creación': comp.createdAt,
+        }));
+
+        const wb = xlsx.utils.book_new();
+        const ws = xlsx.utils.json_to_sheet(data);
+
+        xlsx.utils.book_append_sheet(wb, ws, 'Companies');
+
+        const filePath = './reports/reporte_companies.xlsx';
+        xlsx.writeFile(wb, filePath);
+
+        console.log('Reporte generado exitosamente.');
+
+        res.download(filePath, 'reporte_companies.xlsx', (err) => {
+            if (err) {
+                console.error("Error al descargar el archivo:", err);
+                res.status(500).send("Error al generar el reporte.");
+            }
+        });
+    } catch (error) {
+        console.error("Error al generar el reporte:", error);
+        res.status(500).send("Error al obtener las compañías.");
+    }
+};

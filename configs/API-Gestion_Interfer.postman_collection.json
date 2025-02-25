@@ -527,6 +527,31 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Generate Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:3000/gestorInterfer/v1/company/generateReport",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "3000",
+							"path": [
+								"gestorInterfer",
+								"v1",
+								"company",
+								"generateReport"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
