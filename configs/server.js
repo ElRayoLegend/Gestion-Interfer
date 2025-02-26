@@ -9,6 +9,7 @@ import authRoutes from "../src/auth/auth.routes.js"
 import adminRoutes from "../src/admin/admin.routes.js"
 import companyRoutes from "../src/company/company.routes.js"
 import apiLimiter from "../src/middlewares/rate-limit-validator.js"
+import { swaggerDocs, swaggerUi } from "./swagger.js"
 
 const middlewares = (app) => {
     app.use(express.urlencoded({extended: false}))
@@ -37,6 +38,7 @@ const routes = (app) =>{
     app.use("/gestorInterfer/v1/auth", authRoutes)
     app.use("/gestorInterfer/v1/admin", adminRoutes)
     app.use("/gestorInterfer/v1/company", companyRoutes)
+    app.use("/gestorInterfer/v1/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 }
 
 const conectarDB = async () =>{
